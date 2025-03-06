@@ -2,21 +2,25 @@ import { FormEvent, useState } from 'react';
 import styles from './PostComments.module.css';
 
 import Comment from '../../models/Comment';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/sotre';
+import { adicionar } from '../../store/reducers/comentarios';
 
 const Post = () => {
-    const [comments, setComments] = useState<Comment[]>([]);
+    const dispatch = useDispatch()
+    const comments = useSelector((state: RootState) => state.comentarios.lista) 
     const [tempComment, setTempComment] = useState('');
 
     function handleAddComment(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const newComment = new Comment(comments.length, tempComment);
         setTempComment('');
-        setComments([...comments, newComment]);
+        dispatch(adicionar(newComment))
     }
 
     return (
         <div>
-            <ul className={styles['post-comments']}>
+            <ul data-testId="listaComentarios" className={styles['post-comments']}>
                 {comments.map(({ comment, id }) => (
                     <li className={styles['post-comment']} key={id}>
                         <p className={styles['post-comment-content']}>
